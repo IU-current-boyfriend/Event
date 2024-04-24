@@ -83,6 +83,9 @@ class MyEventBus {
     return this;
   }
 
+
+
+
   /**
    * 当eventName事件执行的时候，eventCallback只会执行一次。
    * 如果不处理的话，因为eventName事件可能会被收集很多次，自然eventCallback也会执行
@@ -103,11 +106,30 @@ class MyEventBus {
     if (!isFunction(eventCallback)) throw new TypeError('eventCallback type must be function...');
 
     const _tempCallback = (...pyload) => {
-      // 关闭事件
-      this.off(eventName, _tempCallback);
-      eventCallback.apply(thisArg, pyload);
+      // 设置函数只执行一次
+      this._once(eventName, _tempCallback, (valid) => {
+        valid && eventCallback.apply(thisArg, pyload);
+      })
     }
+
+    // 给once需要执行一次的函数添加标记
+    Object.defineProperty(_tempCallback, '_once', {
+      value: '_once',
+      writable: false,
+      enumerable: false,
+      configurable: false
+    });
+
     return this.on(eventName, _tempCallback, thisArg);
+  }
+
+
+  _once(eventName, onceExecutorFn, callback) {
+    const handlers = this.eventPool[eventName];
+    // 在回调函数集合中，找到第一个只执行一次的回调函数
+    const onceFn = handlers && handlers.find(fn => fn.eventCallback._once);
+    callback && callback(onceFn ? true : false);
+    this.eventPool[eventName] = this.eventPool[eventName].filter(fn => !fn.eventCallback._once);
   }
 
 
@@ -121,11 +143,11 @@ class MyEventBus {
     const _isExistEventName = () => {
       return this.eventPool[eventName];
     }
-    const _isExistCloseFn = (fn) => {
+    const _isExistCloseFn = (callback) => {
       const handlers = this.eventPool[eventName];
       if (handlers) {
         const closeFn = handlers.find(fn => fn.eventCallback === closeCallback);
-        closeFn && fn(closeFn);
+        closeFn && callback(closeFn);
       }
     }
     // 对需要关闭的回调函数进行操作

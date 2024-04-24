@@ -19,16 +19,39 @@ const lileiCallback1 = (...payload) => {
 
 // eventBus.on("why", whyCallback1)
 // eventBus.on("why", whyCallback2)
+// eventBus.off('why', whyCallback1);
+// eventBus.emit('why', 'abc', 'cba', 'nba');
 // eventBus.on('lilei', lileiCallback1)
 
-myEventBus.on('why', whyCallback1);
-myEventBus.on('why', whyCallback2);
+// myEventBus.on('why', whyCallback1);
+// eventBus.on('why', whyCallback1);
 // myEventBus.on('lilei', lileiCallback1);
+
+// myEventBus.on('why', whyCallback1);
+// myEventBus.on('why', whyCallback2);
+
+// myEventBus.off('why', whyCallback1);
+
+myEventBus.once('why', (...pyload) => {
+  console.log('once1: =>', pyload);
+});
+
+myEventBus.once('why', (...pyload) => {
+  console.log('once2: =>', pyload);
+});
+
+myEventBus.once('why', (...pyload) => {
+  console.log('once3: =>', pyload);
+});
+
+// console.log('eventBus: =>', eventBus.eventBus.why[0].eventCallback === eventBus.eventBus.why[1].eventCallback);
+
+myEventBus.emit('why', 'abc', 'cba', 'nba');
 
 
 // setTimeout(() => {
-//   myEventBus.emit('why', 'abc', 'cba', 'nba');
-//   // myEventBus.emit('lilei', 'abc', 'cba', 'nba');
+// myEventBus.emit('why', 'abc', 'cba', 'nba');
+// myEventBus.emit('lilei', 'abc', 'cba', 'nba');
 // }, 1000);
 
 // myEventBus.once('why', (...pyload) => {
@@ -37,11 +60,11 @@ myEventBus.on('why', whyCallback2);
 
 // console.log('hasEvent: =>', myEventBus.hasEvent('why'));
 
-myEventBus.once("why", (...payload) => {
-  console.log("why once:", payload)
-})
+// myEventBus.once("why", (...payload) => {
+//   console.log("why once:", payload)
+// })
 
-myEventBus.emit('why', 'acb', 'cba', 'nba');
+// myEventBus.emit('why', 'acb', 'cba', 'nba');
 
 // eventBus.once('why', (...pyload) => {
 //   console.log('why once:', pyload);
